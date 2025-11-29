@@ -3,7 +3,17 @@ import Link from 'next/link';
 import { ProjectMeta } from '../lib/projects';
 
 export default function ProjectCard({ project, mirrored, index }: { project: ProjectMeta; mirrored: boolean; index: number }) {
-	const cover = project.coverImage ?? 'https://via.placeholder.com/900x600?text=Cover';
+	// Add base path for local images
+const getImagePath = (path: string) => {
+  if (!path) return 'https://via.placeholder.com/900x600?text=Cover';
+  // If it's an external URL, return as is
+  if (path.startsWith('http')) return path;
+  // For local images, add the base path
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  return `${basePath}${path}`;
+};
+
+const cover = getImagePath(project.coverImage);
 	const alt = project.coverAlt ?? `${project.title} cover`;
 
 	function computeEnd(meta: ProjectMeta): { endText: string; duration: string; isOngoing: boolean } | null {
