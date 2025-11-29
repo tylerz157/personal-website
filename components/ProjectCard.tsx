@@ -105,6 +105,6 @@ const ProjectCard = memo(function ProjectCard({
 			</article>
 		</Link>
 	);
-}
+});
 
-
+export default ProjectCard;
