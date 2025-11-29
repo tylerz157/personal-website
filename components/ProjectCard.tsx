@@ -62,9 +62,6 @@ const ProjectCard = memo(function ProjectCard({
         duration = `${yearsText}, ${monthsText}`;
       }
     }
-				const monthsText = remainingMonths === 1 ? '1 month' : `${remainingMonths} months`;
-				duration = `${yearsText}, ${monthsText}`;
-			}
 		}
 
 		// Add '+' to duration for ongoing projects
