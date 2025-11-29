@@ -568,7 +568,8 @@ img { max-width: 100%; height: auto; border-radius: 0; }
 .prose {
 	--prose: #d9d9e3;
 	--prose-muted: #a9a9b3;
-	max-width: 760px;
+	max-width: 100%;
+	width: 100%;
 }
 .prose p { color: #2b2b2b; }
 .prose img { margin: 1.2em 0; }
