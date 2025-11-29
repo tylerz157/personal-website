@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { ProjectMeta } from '../lib/projects';
 
 export default function ProjectCard({ project, mirrored, index }: { project: ProjectMeta; mirrored: boolean; index: number }) {
-	// Add base path for local images
-const getImagePath = (path: string) => {
+// Add base path for local images
+const getImagePath = (path: string | undefined): string => {
   if (!path) return 'https://via.placeholder.com/900x600?text=Cover';
   // If it's an external URL, return as is
   if (path.startsWith('http')) return path;
