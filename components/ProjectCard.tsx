@@ -62,17 +62,14 @@ const ProjectCard = memo(function ProjectCard({
         duration = `${yearsText}, ${monthsText}`;
       }
     }
-		}
 
-		// Add '+' to duration for ongoing projects
-		if (isOngoing) {
-			duration += '+';
-		}
-		
-		return { endText, duration, isOngoing };
-	}
-
-	const endInfo = computeEnd(project);
+    // Add '+' to duration for ongoing projects
+    if (isOngoing) {
+      duration += '+';
+    }
+    
+    return { endText, duration, isOngoing };
+  }, [project.date, project.endDate]);
 	return (
 		<Link href={`/projects/${project.slug}`} className="project-link" aria-label={project.title}>
 			<article className="project-row">
