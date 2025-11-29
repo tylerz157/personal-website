@@ -21,7 +21,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 					{meta.coverImage ? (
 						<div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #000', borderRadius: 0, boxShadow: '10px 10px 0 #000', lineHeight: 0, maxWidth: '50%', marginLeft: 'auto', marginRight: 'auto' }}>
 							<img 
-								src={meta.coverImage} 
+								src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${meta.coverImage}`} 
 								alt={meta.coverAlt ?? `${meta.title} cover`} 
 								style={{ 
 									display: 'block', 
