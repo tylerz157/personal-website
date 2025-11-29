@@ -1,0 +1,87 @@
+# Site settings
+title: Your Name
+email: your.email@example.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Your personal portfolio website built with Next.js and MDX
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://yourusername.github.io" # the base hostname & protocol for your site
+
+author:
+  name: Your Name
+  description: "Software Developer & Designer"
+  github: yourusername
+  twitter: yourtwitter
+  linkedin: yourlinkedin
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude from processing.
+# The following items will not be processed, by default.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .git
+  - .github
+  - .vscode
+  - .idea
+  - .gitignore
+  - README.md
+  - package.json
+  - package-lock.json
+  - yarn.lock
+  - next.config.js
+  - public/images
+
+# Theme settings
+theme_color: "#000000"
+background_color: "#ffffff"
+
+# Social media usernames
+twitter_username: yourtwitter
+github_username: yourusername
+linkedin_username: yourlinkedin
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"
+
+# Collections
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+  posts:
+    output: true
+    permalink: /blog/:path/
+
+# SASS settings
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Build settings
+timezone: America/Los_Angeles # Change this to your timezone
+
+# Plugins
+gems:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Optional: Analytics
+google_analytics: UA-XXXXX-X # Your Google Analytics tracking ID

@@ -13,16 +13,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			<body>
 				<header className="site-header">
 					<div className="container">
-						<Link className="brand" href="/">My Portfolio</Link>
+						<Link className="brand" href="/">Made by Horizon</Link>
 						<nav className="nav">
 							<Link href="/">Projects</Link>
-							<Link href="/curations">Curations</Link>
+							{/* <Link href="/curations">Curations</Link> */}
 						</nav>
 					</div>
 				</header>
 				<main className="container">{children}</main>
 				<footer className="site-footer">
-					<div className="container">© {new Date().getFullYear()} • Built with Next.js</div>
+					<div className="container">© {new Date().getFullYear()} • Tyler Zhang</div>
 				</footer>
 			</body>
 		</html>

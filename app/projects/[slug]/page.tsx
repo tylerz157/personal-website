@@ -19,8 +19,17 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 					<h1>{meta.title}</h1>
 					<p style={{ color: 'var(--muted)', margin: 0 }}>{meta.description}</p>
 					{meta.coverImage ? (
-						<div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #000', borderRadius: 0, boxShadow: '10px 10px 0 #000', lineHeight: 0 }}>
-							<img src={meta.coverImage} alt={meta.coverAlt ?? `${meta.title} cover`} style={{ display: 'block', width: '100%', height: 'auto' }} />
+						<div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #000', borderRadius: 0, boxShadow: '10px 10px 0 #000', lineHeight: 0, maxWidth: '50%', marginLeft: 'auto', marginRight: 'auto' }}>
+							<img 
+								src={meta.coverImage} 
+								alt={meta.coverAlt ?? `${meta.title} cover`} 
+								style={{ 
+									display: 'block', 
+									width: '100%', 
+									height: 'auto',
+									objectFit: 'contain'
+								}} 
+							/>
 						</div>
 					) : null}
 					{(meta.url || (meta.links && meta.links.length) || (meta.files && meta.files.length)) ? (

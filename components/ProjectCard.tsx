@@ -6,16 +6,49 @@ export default function ProjectCard({ project, mirrored, index }: { project: Pro
 	const cover = project.coverImage ?? 'https://via.placeholder.com/900x600?text=Cover';
 	const alt = project.coverAlt ?? `${project.title} cover`;
 
-	function computeEnd(meta: ProjectMeta): { endText: string; duration?: string } | null {
+	function computeEnd(meta: ProjectMeta): { endText: string; duration: string; isOngoing: boolean } | null {
 		if (!meta.date) return null;
+		
 		const start = new Date(meta.date);
-		const end = meta.endDate ? new Date(meta.endDate) : new Date();
-		const endText = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short' }).format(end);
-		let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-		if (end.getDate() < start.getDate()) months -= 1;
-		const durationMonths = Math.max(1, months);
-		const duration = durationMonths === 1 ? '1 month' : `${durationMonths} months`;
-		return { endText, duration };
+		const isOngoing = meta.endDate?.toLowerCase() === 'present';
+		const end = isOngoing ? new Date() : (meta.endDate ? new Date(meta.endDate) : new Date());
+		const endText = isOngoing ? 'Present' : new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short' }).format(end);
+		
+		// Calculate the difference in milliseconds
+		const diffTime = Math.abs(end.getTime() - start.getTime());
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+		
+		let duration: string;
+		
+		// Determine the most appropriate time unit
+		if (diffDays < 7) {
+			duration = diffDays === 1 ? '1 day' : `${diffDays} days`;
+		} else if (diffDays < 30) {
+			const weeks = Math.round(diffDays / 7);
+			duration = weeks === 1 ? '1 week' : `${weeks} weeks`;
+		} else if (diffDays < 365) {
+			const months = Math.round(diffDays / 30);
+			duration = months === 1 ? '1 month' : `${months} months`;
+		} else {
+			// For years, be more precise with months
+			const years = Math.floor(diffDays / 365);
+			const remainingMonths = Math.round((diffDays % 365) / 30);
+			
+			if (remainingMonths === 0) {
+				duration = years === 1 ? '1 year' : `${years} years`;
+			} else {
+				const yearsText = years === 1 ? '1 year' : `${years} years`;
+				const monthsText = remainingMonths === 1 ? '1 month' : `${remainingMonths} months`;
+				duration = `${yearsText}, ${monthsText}`;
+			}
+		}
+
+		// Add '+' to duration for ongoing projects
+		if (isOngoing) {
+			duration += '+';
+		}
+		
+		return { endText, duration, isOngoing };
 	}
 
 	const endInfo = computeEnd(project);

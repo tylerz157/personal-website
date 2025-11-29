@@ -5,13 +5,31 @@ import type { ProjectMeta } from "../lib/projects";
 
 type Props = {
 	projects: ProjectMeta[];
+	featuredTopics?: string[];
 };
 
 function normalize(str: string): string {
 	return str.toLowerCase();
 }
 
-export default function ProjectsBrowser({ projects }: Props) {
+// Define tag groups
+const tagGroups = {
+  size: new Set(['big', 'small']),
+  type: new Set(['professional', 'for-fun']),
+  team: new Set(['solo', 'team'])
+} as const;
+
+// Function to check if a tag belongs to any group
+function getTagGroup(tag: string): keyof typeof tagGroups | null {
+  for (const [group, tags] of Object.entries(tagGroups)) {
+    if (tags.has(tag)) {
+      return group as keyof typeof tagGroups;
+    }
+  }
+  return null;
+}
+
+export default function ProjectsBrowser({ projects, featuredTopics: featuredTopicsProp }: Props) {
 	const [query, setQuery] = useState("");
 	const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 	const [showMore, setShowMore] = useState(false);
@@ -24,27 +42,56 @@ export default function ProjectsBrowser({ projects }: Props) {
 		return Array.from(s).sort((a, b) => a.localeCompare(b));
 	}, [projects]);
 
-	const featuredTopics = useMemo(() => allTags.slice(0, 2), [allTags]);
-	const moreTopics = useMemo(() => allTags.slice(2), [allTags]);
+	const featuredTopics = useMemo(() => {
+		if (featuredTopicsProp && featuredTopicsProp.length) return featuredTopicsProp;
+		return allTags.slice(0, 2);
+	}, [allTags, featuredTopicsProp]);
+	const moreTopics = useMemo(() => {
+		const featuredSet = new Set(featuredTopics);
+		return allTags.filter((t) => !featuredSet.has(t));
+	}, [allTags, featuredTopics]);
 
 	const filtered = useMemo(() => {
 		const q = normalize(query.trim());
 		const hasQuery = q.length > 0;
-		const needTags = selectedTags.size > 0;
+		
+		// Get the selected tags grouped by their category
+		const selectedByGroup = {
+			size: Array.from(selectedTags).filter(tag => tagGroups.size.has(tag)),
+			type: Array.from(selectedTags).filter(tag => tagGroups.type.has(tag)),
+			team: Array.from(selectedTags).filter(tag => tagGroups.team.has(tag)),
+			other: Array.from(selectedTags).filter(tag => 
+				!tagGroups.size.has(tag) && 
+				!tagGroups.type.has(tag) && 
+				!tagGroups.team.has(tag)
+			)
+		};
 
 		return projects.filter((p) => {
+			// Text search
 			if (hasQuery) {
 				const hay = `${p.title} ${p.description}`.toLowerCase();
 				if (!hay.includes(q)) return false;
 			}
-			if (needTags) {
-				const tags = new Set(p.tags ?? []);
-				let match = false;
-				for (const t of selectedTags) {
-					if (tags.has(t)) { match = true; break; }
-				}
-				if (!match) return false;
+
+			const projectTags = new Set(p.tags ?? []);
+			
+			// Check required tag groups (AND between groups)
+			if (selectedByGroup.size.length > 0 && !selectedByGroup.size.some(tag => projectTags.has(tag))) {
+				return false;
 			}
+			if (selectedByGroup.type.length > 0 && !selectedByGroup.type.some(tag => projectTags.has(tag))) {
+				return false;
+			}
+			if (selectedByGroup.team.length > 0 && !selectedByGroup.team.some(tag => projectTags.has(tag))) {
+				return false;
+			}
+			
+			// Check other tags (OR within the group)
+			if (selectedByGroup.other.length > 0 && !selectedByGroup.other.some(tag => projectTags.has(tag))) {
+				return false;
+			}
+			
 			return true;
 		});
 	}, [projects, query, selectedTags]);
@@ -52,7 +99,29 @@ export default function ProjectsBrowser({ projects }: Props) {
 	function toggleTag(tag: string) {
 		setSelectedTags((prev) => {
 			const next = new Set(prev);
-			if (next.has(tag)) next.delete(tag); else next.add(tag);
+			const group = getTagGroup(tag);
+			
+			// If the tag is in a group, handle mutual exclusivity
+			if (group) {
+				// First, remove all tags from the same group
+				for (const t of next) {
+					if (tagGroups[group].has(t)) {
+						next.delete(t);
+					}
+				}
+				// Then add the new tag if it wasn't already selected
+				if (!prev.has(tag)) {
+					next.add(tag);
+				}
+			} else {
+				// Toggle the tag if it's not in any group
+				if (next.has(tag)) {
+					next.delete(tag);
+				} else {
+					next.add(tag);
+				}
+			}
+			
 			return next;
 		});
 	}
@@ -98,7 +167,7 @@ export default function ProjectsBrowser({ projects }: Props) {
 								aria-expanded={showMore}
 								aria-controls="topics-tray"
 							>
-								More topics
+								MORE-TOPICS 
 							</button>
 							<div id="topics-tray" className={`topics-tray ${showMore ? "open" : ""}`}>
 								{moreTopics.map((tag) => {

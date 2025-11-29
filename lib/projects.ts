@@ -60,19 +60,56 @@ export async function getProjectBySlug(slug: string): Promise<{
 	return { meta, content };
 }
 
+function parseDate(dateStr: string | undefined): Date | null {
+    if (!dateStr) return null;
+    // Handle YYYY-MM-DD and YYYY-M-D formats
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // months are 0-indexed
+        const day = parseInt(parts[2], 10);
+        return new Date(year, month, day);
+    }
+    return new Date(dateStr);
+}
+
+function calculateDurationDays(startDate: Date, endDate: Date): number {
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
 export async function getAllProjects(): Promise<ProjectMeta[]> {
-	const slugs = await getProjectSlugs();
-	const projects = await Promise.all(slugs.map((slug) => getProjectBySlug(slug)));
-	// Sort by date desc if provided, else by title
-	const sorted = projects
-		.map((p) => p.meta)
-		.sort((a, b) => {
-			if (a.date && b.date) {
-				return new Date(b.date).getTime() - new Date(a.date).getTime();
-			}
-			return a.title.localeCompare(b.title);
-		});
-	return sorted;
+    const slugs = await getProjectSlugs();
+    const projects = await Promise.all(slugs.map((slug) => getProjectBySlug(slug)));
+    
+    const now = new Date();
+    
+    const sorted = projects
+        .map((p) => p.meta)
+        .sort((a, b) => {
+            const aIsPresent = a.endDate?.toLowerCase() === 'present';
+            const bIsPresent = b.endDate?.toLowerCase() === 'present';
+            
+            // If both are present, sort by duration (shortest first)
+            if (aIsPresent && bIsPresent) {
+                const aStart = parseDate(a.date) || new Date(0);
+                const bStart = parseDate(b.date) || new Date(0);
+                const aDuration = calculateDurationDays(aStart, now);
+                const bDuration = calculateDurationDays(bStart, now);
+                return aDuration - bDuration; // Sort by duration ascending
+            }
+            
+            // If only one is present, put the present one first
+            if (aIsPresent) return -1;
+            if (bIsPresent) return 1;
+            
+            // For non-present projects, sort by end date (newest first)
+            const aDate = parseDate(a.endDate) || parseDate(a.date) || new Date(0);
+            const bDate = parseDate(b.endDate) || parseDate(b.date) || new Date(0);
+            return bDate.getTime() - aDate.getTime();
+        });
+    
+    return sorted;
 }
 
 
