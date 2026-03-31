@@ -1,26 +1,18 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProjectMeta } from '../lib/projects';
 
-const ProjectCard = memo(function ProjectCard({ 
-  project, 
-  mirrored, 
-  index 
-}: { 
-  project: ProjectMeta; 
-  mirrored: boolean; 
-  index: number 
+const ProjectCard = memo(function ProjectCard({
+  project,
+  mirrored,
+  index
+}: {
+  project: ProjectMeta;
+  mirrored: boolean;
+  index: number
 }) {
-  // Memoize the image path calculation
-  const getImagePath = useCallback((path: string | undefined): string => {
-    if (!path) return 'https://via.placeholder.com/900x600?text=Cover';
-    if (path.startsWith('http')) return path;
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-    return `${basePath}${path}`;
-  }, []);
-
-  const cover = getImagePath(project.coverImage);
+  const cover = project.coverImage ?? 'https://via.placeholder.com/900x600?text=Cover';
   const alt = project.coverAlt ?? `${project.title} cover`;
 
   const endInfo = useMemo(() => {

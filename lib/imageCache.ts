@@ -1,23 +1,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import sharp from 'sharp';
 
-const PUBLIC_CACHE_DIR = path.join(process.cwd(), 'public', '_cache');
+const PUBLIC_DIR = path.join(process.cwd(), 'public');
+const PUBLIC_CACHE_DIR = path.join(PUBLIC_DIR, '_cache');
 
-function fileExtFromUrl(url: string): string {
-  try {
-    const u = new URL(url);
-    const ext = path.extname(u.pathname).toLowerCase();
-    if (ext && ext.length <= 6) return ext; // .jpg, .jpeg, .png, .webp, .gif
-  } catch {}
-  return '.jpg';
+export function isRemoteUrl(src?: string): boolean {
+  return !!src && (src.startsWith('http://') || src.startsWith('https://'));
 }
 
-export async function ensureLocalImage(remoteUrl: string): Promise<string> {
-  // Returns web path like /_cache/<hash>.<ext>
-  const hash = crypto.createHash('sha1').update(remoteUrl).digest('hex').slice(0, 16);
-  const ext = fileExtFromUrl(remoteUrl);
-  const fileName = `${hash}${ext}`;
+// Resize and cache any image (remote URL or local /public path) to /_cache/<hash>.jpg.
+// Returns the web path to the cached file, or the original src on failure.
+export async function ensureOptimizedImage(src: string): Promise<string> {
+  const hash = crypto.createHash('sha1').update(src).digest('hex').slice(0, 16);
+  const fileName = `${hash}.jpg`;
   const outPath = path.join(PUBLIC_CACHE_DIR, fileName);
   const webPath = `/_cache/${fileName}`;
 
@@ -28,17 +25,24 @@ export async function ensureLocalImage(remoteUrl: string): Promise<string> {
 
   await fs.mkdir(PUBLIC_CACHE_DIR, { recursive: true });
 
-  const res = await fetch(remoteUrl, { cache: 'no-store' });
-  if (!res.ok || !res.body) {
-    // If fetch fails, return original URL to avoid breaking render
-    return remoteUrl;
+  let buf: Buffer;
+  if (isRemoteUrl(src)) {
+    const res = await fetch(src, { cache: 'no-store' });
+    if (!res.ok || !res.body) return src;
+    buf = Buffer.from(await res.arrayBuffer());
+  } else {
+    const localPath = path.join(PUBLIC_DIR, src);
+    try {
+      buf = await fs.readFile(localPath);
+    } catch {
+      return src;
+    }
   }
-  const arrayBuffer = await res.arrayBuffer();
-  const buf = Buffer.from(arrayBuffer);
-  await fs.writeFile(outPath, buf);
-  return webPath;
-}
 
-export function isRemoteUrl(src?: string): boolean {
-  return !!src && (src.startsWith('http://') || src.startsWith('https://'));
+  await sharp(buf)
+    .resize({ width: 960, withoutEnlargement: true })
+    .jpeg({ quality: 82 })
+    .toFile(outPath);
+
+  return webPath;
 }

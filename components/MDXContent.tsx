@@ -1,6 +1,6 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import React from 'react';
-import { ensureLocalImage, isRemoteUrl } from '../lib/imageCache';
+import { ensureOptimizedImage, isRemoteUrl } from '../lib/imageCache';
 
 const components = {
     img: async (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
@@ -16,7 +16,7 @@ const components = {
         let resolvedSrc = src as string;
         if (typeof src === 'string' && isRemoteUrl(src)) {
             try {
-                resolvedSrc = await ensureLocalImage(src);
+                resolvedSrc = await ensureOptimizedImage(src);
             } catch {}
         }
         return (

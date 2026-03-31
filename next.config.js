@@ -13,8 +13,6 @@ const nextConfig = {
   // Configure images for static export
   images: {
     unoptimized: true, // Required for static export
-    domains: ['tylerz157.github.io'],
-    path: isGithubActions ? `/${repositoryName}/_next/image` : '/_next/image',
     loader: 'custom',
     loaderFile: './image-loader.js',
   },
