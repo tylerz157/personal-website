@@ -23,7 +23,6 @@ yarn-error.log*
 .pnp.*
 
 # Cache and runtime
-public/_cache/
 .vercel/
 .cache/
 coverage/

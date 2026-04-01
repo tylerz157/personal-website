@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { ensureOptimizedImage } from './imageCache';
 
 export type CurationLink = { label: string; href: string };
 export type CurationFile = { label?: string; href: string };
@@ -49,11 +48,6 @@ export async function getCurationBySlug(slug: string): Promise<{ meta: CurationM
     links: data.links ?? undefined,
     files: data.files ?? undefined,
   };
-  if (meta.coverImage) {
-    try {
-      meta.coverImage = await ensureOptimizedImage(meta.coverImage);
-    } catch {}
-  }
   return { meta, content };
 }
 

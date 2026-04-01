@@ -1,9 +1,7 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import React from 'react';
-import { ensureOptimizedImage, isRemoteUrl } from '../lib/imageCache';
-
 const components = {
-    img: async (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+    img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
         const { src = '', alt = '', ...rest } = props;
         const frameStyle: React.CSSProperties = {
             marginTop: 16,
@@ -13,15 +11,9 @@ const components = {
             boxShadow: '10px 10px 0 #000',
             lineHeight: 0,
         };
-        let resolvedSrc = src as string;
-        if (typeof src === 'string' && isRemoteUrl(src)) {
-            try {
-                resolvedSrc = await ensureOptimizedImage(src);
-            } catch {}
-        }
         return (
             <span style={{ ...frameStyle, display: 'block' }}>
-                <img {...rest} src={resolvedSrc} alt={alt} style={{ display: 'block', width: '100%', height: 'auto', margin: 0 }} />
+                <img {...rest} src={src} alt={alt} style={{ display: 'block', width: '100%', height: 'auto', margin: 0 }} />
             </span>
         );
     },
