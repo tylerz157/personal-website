@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getProjectSlugs } from '../../../lib/projects';
 import MDXContent from '../../../components/MDXContent';
+import AdminBar from '../../../components/AdminBar';
 
 type Params = { slug: string };
 
@@ -14,22 +15,25 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 	try {
 		const { meta, content } = await getProjectBySlug(slug);
 		return (
+			<>
 			<article>
 				<header style={{ margin: '28px 0 16px' }}>
 					<h1>{meta.title}</h1>
 					<p style={{ color: 'var(--muted)', margin: 0 }}>{meta.description}</p>
 					{meta.coverImage ? (
-						<div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #000', borderRadius: 0, boxShadow: '10px 10px 0 #000', lineHeight: 0, maxWidth: '50%', marginLeft: 'auto', marginRight: 'auto' }}>
-							<img 
-								src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${meta.coverImage}`} 
-								alt={meta.coverAlt ?? `${meta.title} cover`} 
-								style={{ 
-									display: 'block', 
-									width: '100%', 
-									height: 'auto',
-									objectFit: 'contain'
-								}} 
-							/>
+						<div style={{ padding: '40px 0' }}>
+							<div className="shadow-3d" style={{ overflow: 'hidden', border: '1px solid #000', borderRadius: 0, lineHeight: 0, maxWidth: '50%', margin: '0 auto' }}>
+								<img
+									src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${meta.coverImage}`}
+									alt={meta.coverAlt ?? `${meta.title} cover`}
+									style={{
+										display: 'block',
+										width: '100%',
+										height: 'auto',
+										objectFit: 'contain'
+									}}
+								/>
+							</div>
 						</div>
 					) : null}
 					{(meta.url || (meta.links && meta.links.length) || (meta.files && meta.files.length)) ? (
@@ -50,10 +54,10 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 				</header>
 				<MDXContent source={content} />
 			</article>
+			<AdminBar slug={slug} />
+			</>
 		);
 	} catch {
 		notFound();
 	}
 }
-
-

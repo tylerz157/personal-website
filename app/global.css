@@ -24,7 +24,17 @@
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 .curation-inner:hover {
-  box-shadow: 10px 10px 0 #000;
+  box-shadow:
+    1px 1px 0 #000,
+    2px 2px 0 #000,
+    3px 3px 0 #000,
+    4px 4px 0 #000,
+    5px 5px 0 #000,
+    6px 6px 0 #000,
+    7px 7px 0 #000,
+    8px 8px 0 #000,
+    9px 9px 0 #000,
+    10px 10px 0 #000;
   transform: translate(-4px, -4px);
 }
 .curation-cover {
@@ -196,14 +206,23 @@ img { max-width: 100%; height: auto; border-radius: 0; }
 	background: var(--panel);
 	border: 1px solid #000;
 	border-radius: 0;
-	transition: box-shadow 0.15s ease, transform 0.15s ease;
+	transition: box-shadow 0.15s ease, transform 0.15s ease, background 0.15s ease;
 	position: relative;
 	z-index: 2;
 	padding-right: calc(var(--timeline-x) + 180px);
 }
 .project-inner:hover {
-	box-shadow: 10px 10px 0 #000;
-	transform: translate(-4px, -4px);
+	transform: translate(-6px, -6px);
+	background: #faf6ec;
+	box-shadow:
+		1px 1px 0 #000,
+		2px 2px 0 #000,
+		3px 3px 0 #000,
+		4px 4px 0 #000,
+		5px 5px 0 #000,
+		6px 6px 0 #000,
+		7px 7px 0 #000,
+		8px 8px 0 #000;
 }
 .project-cover {
 	position: relative;
@@ -563,6 +582,19 @@ img { max-width: 100%; height: auto; border-radius: 0; }
 	.projects-browser .controls.half,
 	.projects-browser .topics.half { max-width: 100%; }
 	.topics-list { left: 0; top: calc(100% + 6px); max-width: 90vw; }
+}
+
+/* 3D box shadow — stacked 1px shadows fill the diagonal so corners look solid */
+.shadow-3d {
+	box-shadow:
+		1px 1px 0 #000,
+		2px 2px 0 #000,
+		3px 3px 0 #000,
+		4px 4px 0 #000,
+		5px 5px 0 #000,
+		6px 6px 0 #000,
+		7px 7px 0 #000,
+		8px 8px 0 #000;
 }
 
 .prose {

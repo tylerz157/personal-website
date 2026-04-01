@@ -1,7 +1,6 @@
 import { getAllProjects } from '../lib/projects';
 import ProjectsBrowser from '../components/ProjectsBrowser';
-
-export const dynamic = 'force-static';
+import NewProjectButton from '../components/NewProjectButton';
 
 export default async function ProjectsPage() {
 	const projects = await getAllProjects();
@@ -15,6 +14,7 @@ export default async function ProjectsPage() {
 				<p style={{ color: 'var(--muted)', margin: '6px 0 0 0' }}>
 					From cars, robotics, sustainability, AI, video games, and more.
 				</p>
+				<NewProjectButton />
 			</section>
 			<ProjectsBrowser projects={projects}
 				featuredTopics={['professional', 'for-fun','solo','team','big','small']}

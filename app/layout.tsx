@@ -1,6 +1,7 @@
 import './global.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import FooterLogin from '../components/FooterLogin';
 
 export const metadata: Metadata = {
 	title: 'Portfolio',
@@ -22,7 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				</header>
 				<main className="container">{children}</main>
 				<footer className="site-footer">
-					<div className="container">© {new Date().getFullYear()} • Tyler Zhang</div>
+					<div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<span>© {new Date().getFullYear()} • Tyler Zhang</span>
+						<FooterLogin />
+					</div>
 				</footer>
 			</body>
 		</html>
