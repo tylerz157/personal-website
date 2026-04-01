@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getProjectBySlug, getProjectSlugs } from '../../../lib/projects';
 import MDXContent from '../../../components/MDXContent';
-import AdminBar from '../../../components/AdminBar';
 
 type Params = { slug: string };
 
@@ -15,7 +14,6 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 	try {
 		const { meta, content } = await getProjectBySlug(slug);
 		return (
-			<>
 			<article>
 				<header style={{ margin: '28px 0 16px' }}>
 					<h1>{meta.title}</h1>
@@ -54,8 +52,6 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 				</header>
 				<MDXContent source={content} />
 			</article>
-			<AdminBar slug={slug} />
-			</>
 		);
 	} catch {
 		notFound();

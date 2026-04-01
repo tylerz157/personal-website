@@ -2,6 +2,7 @@ import './global.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import FooterLogin from '../components/FooterLogin';
+import AdminBar from '../components/AdminBar';
 
 export const metadata: Metadata = {
 	title: 'Portfolio',
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					</div>
 				</header>
 				<main className="container">{children}</main>
+				<AdminBar />
 				<footer className="site-footer">
 					<div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 						<span>© {new Date().getFullYear()} • Tyler Zhang</span>
