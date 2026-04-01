@@ -47,9 +47,7 @@ export default function AdminBar() {
     async function handleLogout() {
         setLoggingOut(true);
         await fetch('/api/auth/logout', { method: 'POST' });
-        setIsAdmin(false);
-        setLoggingOut(false);
-        router.refresh();
+        window.location.reload();
     }
 
     function handleTitleChange(t: string) {

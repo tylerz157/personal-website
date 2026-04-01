@@ -28,9 +28,7 @@ export default function FooterLogin() {
                 body: JSON.stringify({ password }),
             });
             if (res.ok) {
-                setIsAdmin(true);
-                setPassword('');
-                router.refresh();
+                window.location.reload();
             } else {
                 setError(true);
                 setPassword('');
